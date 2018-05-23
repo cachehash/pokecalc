@@ -7,7 +7,13 @@
 static sqlite3 *db;
 void init_db() {
 	int rc = sqlite3_open("poke.db", &db);
-	//TODO check this error
+	if (rc) {
+		fprintf(stderr, "Failed to open database: %s\n", sqlite3_errmsg(db));
+	}
+}
+void close_db(int status) {
+	sqlite3_close(db);
+	exit(status);
 }
 struct callback_data {
 	int valid;

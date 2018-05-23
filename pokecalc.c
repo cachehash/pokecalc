@@ -101,12 +101,10 @@ int main() {
 	poke.nid = promptPokemon();
 	poke.nature = promptNature();
 	poke.level = 0;
-	while (poke.level == 0) {
-		int read = 0;
-		printf("Level: ");
-		scanf("%d", &read);
-		poke.level = read;
-	}
+	int read = 0;
+	printf("Level: ");
+	scanf("%d", &read);
+	poke.level = read;
 	int stats[6];
 	for (int statID = 0; statID < 6; statID++) {
 		printf("%s: ", STAT_STRINGS[statID]);
@@ -123,4 +121,5 @@ int main() {
 		}
 		printf("\n");
 	}
+	close_db(0);
 }
