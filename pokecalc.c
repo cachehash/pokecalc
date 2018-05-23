@@ -2,49 +2,20 @@
 #include <stdio.h>
 #include <string.h>
 #define MELOETTA 648
-#define ALL_POKES 1000
 
 #include "stat.h"
 #include "nature.h"
+#include "structs.h"
+#include "sqlite_helper.h"
 
-typedef struct pokemon {
-	int species;
-	unsigned char level;
-	unsigned short nature;
-	unsigned char ivs[6];
-	unsigned char evs[6];
-} pokemon;
-
-typedef struct pokeinfo {
-	int species;
-	unsigned char stats[6];
-} pokeinfo;
-pokeinfo pokinf[ALL_POKES];
-
-int natureBoost(int nat, int statID) {
-	if (statID == 0) {
-		return 0;
-	}
-	statID--;
-	return (nat >> statID) & 1;
-}
-int natureHinder(int nat, int statID) {
-	return natureBoost(nat >> 5, statID);
-}
-float natureFactor(int nat, int statID) {
-	int up = natureBoost(nat, statID);
-	int down = natureHinder(nat, statID);
-	if (up == down) {
-		return 1;
-	} else if (up) {
-		return 1.1;
-	} else {
-		return .9;
-	}
-}
 int calcStat(struct pokemon* poke, int statID) {
-	int spec = poke->species;
-	int base = pokinf[spec].stats[statID];
+	int nid = poke->nid;
+	pokeinfo* pkinf = getInfByNID(nid);
+	if (pkinf == NULL) {
+		fprintf(stderr, "ERROR: Invalid species!\n");
+		return -1;
+	}
+	int base = pkinf->stats[statID];
 	int iv = poke->ivs[statID];
 	int ev = poke->evs[statID];
 	int level = poke->level;
@@ -60,16 +31,7 @@ int calcStat(struct pokemon* poke, int statID) {
 	return stat;
 }
 
-void init() {
-	pokeinfo* p = &pokinf[MELOETTA];
-	p->stats[0] = 100;
-	p->stats[1] = 77;
-	p->stats[2] = 77;
-	p->stats[3] = 128;
-	p->stats[4] = 128;
-	p->stats[5] = 90;
-}
-int bruteForceIV(struct pokemon* poke, int statID, int realStat, int* minIV, int* maxIV) {
+void bruteForceIV(struct pokemon* poke, int statID, int realStat, int* minIV, int* maxIV) {
 	int loc = -1;
 	*minIV = -1;
 	*maxIV = -1;
@@ -112,12 +74,11 @@ int promptNature() {
 	return 0;
 }
 int main() {
-	init();
-	pokemon Meloetta;
-	memset(&Meloetta, 0, sizeof(struct pokemon));
-	Meloetta.species = MELOETTA;
-	Meloetta.level = 50;
-	Meloetta.nature = promptNature();
+	pokemon poke;
+	memset(&poke, 0, sizeof(struct pokemon));
+	poke.nid = MELOETTA;
+	poke.level = 50;
+	poke.nature = promptNature();
 	int stats[6];
 	for (int statID = 0; statID < 6; statID++) {
 		printf("%s: ", STAT_STRINGS[statID]);
@@ -127,7 +88,7 @@ int main() {
 	for (int statID = 0; statID < 6; statID++) {
 		int minIV;
 		int maxIV;
-		bruteForceIV(&Meloetta, statID, stats[statID], &minIV, &maxIV);
+		bruteForceIV(&poke, statID, stats[statID], &minIV, &maxIV);
 		printf("%s: %d", STAT_STRINGS[statID], minIV);
 		if (minIV != maxIV) {
 			printf("-%d", maxIV);

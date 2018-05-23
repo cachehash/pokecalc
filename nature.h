@@ -45,3 +45,6 @@ static const char* NAT_STRINGS[] = {
 
 static const int NUM_NATS = FOREACH_NAT(GENERATE_NATURE_COUNT);
 
+int natureBoost(int nat, int statID);
+int natureHinder(int nat, int statID);
+float natureFactor(int nat, int statID);
