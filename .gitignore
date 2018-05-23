@@ -1,4 +1,6 @@
 nature.o
 pokecalc
 pokecalc.o
-sqlite.o
+sqlite_helper.o
+createDB.sql
+poke.db
