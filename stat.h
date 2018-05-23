@@ -1,21 +1,26 @@
 #define FOREACH_STAT(D) \
-D(Hp) \
-D(Atk) \
-D(Def) \
-D(SpA) \
-D(SpD) \
-D(Spe) \
+D(Hp, "HP") \
+D(Atk, "Attack") \
+D(Def, "Defense") \
+D(SpA, "Sp. Atk") \
+D(SpD, "Sp. Def") \
+D(Spe, "Speed") \
 
-#define GENERATE_ENUM(TOK) TOK,
-#define GENERATE_STRING(TOK) #TOK,
-#define COUNT_STATS(TOK) +1
 	
+#define GENERATE_ENUM(TOK, STR) TOK,
 enum STAT_ENUM {
 	FOREACH_STAT(GENERATE_ENUM)
 };
 
+#define GENERATE_STRING(TOK, STR) #TOK,
 static const char *STAT_STRINGS[] = {
 	FOREACH_STAT(GENERATE_STRING)
 };
 
+#define GENERATE_LONG_NAMES(TOK, STR) STR,
+static const char *STAT_LONG_NAMES[] = {
+	FOREACH_STAT(GENERATE_LONG_NAMES)
+};
+
+#define COUNT_STATS(TOK, STR) +1
 static const int NUM_STATS = FOREACH_STAT(COUNT_STATS);

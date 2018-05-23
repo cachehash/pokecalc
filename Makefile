@@ -1,7 +1,7 @@
 .PHONY: all clean
 
 CFLAGS=-g -Wall
-LDLIBS=-lsqlite3
+LDLIBS=-lsqlite3 -lcurl -ltidy
 
 objs=pokecalc.o sqlite_helper.o nature.o
 
