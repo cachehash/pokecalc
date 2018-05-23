@@ -1,2 +1,4 @@
 #include "structs.h"
-pokeinfo* getInfByNID();
+void init_db();
+pokeinfo* getInfByNID(int);
+pokeinfo* getInfByName(char*);

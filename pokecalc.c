@@ -46,6 +46,8 @@ void bruteForceIV(struct pokemon* poke, int statID, int realStat, int* minIV, in
 			} else if (loc == 0) {
 				*maxIV = i;
 			}
+		} else if (loc == 0) {
+			break;
 		}
 	}
 }
@@ -69,16 +71,42 @@ int promptNature() {
 				return NAT_MAP[n];
 			}
 		}
+		//free line?
+	} while (read != -1);
+	//TODO error
+	return 0;
+}
+int promptPokemon() {
+	int read;
+	do {
+		printf("Pokemon: ");
+		char *line = NULL;
+		size_t sz;
+		read = getline(&line, &sz, stdin);
+		pokeinfo *pkinf = getInfByName(line);
+		if (pkinf != NULL) {
+			int ret = pkinf->nid;
+			free(pkinf);
+			return ret;
+		}
+		//free line?
 	} while (read != -1);
 	//TODO error
 	return 0;
 }
 int main() {
+	init_db();
 	pokemon poke;
 	memset(&poke, 0, sizeof(struct pokemon));
-	poke.nid = MELOETTA;
-	poke.level = 50;
+	poke.nid = promptPokemon();
 	poke.nature = promptNature();
+	poke.level = 0;
+	while (poke.level == 0) {
+		int read = 0;
+		printf("Level: ");
+		scanf("%d", &read);
+		poke.level = read;
+	}
 	int stats[6];
 	for (int statID = 0; statID < 6; statID++) {
 		printf("%s: ", STAT_STRINGS[statID]);
