@@ -1,3 +1,4 @@
+#include "nature.h"
 int natureBoost(int nat, int statID) {
 	if (statID == 0) {
 		return 0;
@@ -18,4 +19,23 @@ float natureFactor(int nat, int statID) {
 	} else {
 		return .9;
 	}
+}
+int getNatureID(char* str) {
+	for (int n = 0; n < NUM_NATS; n++) {
+		const char* nat = NAT_STRINGS[n];
+		int match = 1;
+		for (int i = 0; str[i] && nat[i]; i++) {
+			if (str[i] == '\n') {
+				break;
+			}
+			if ((nat[i] | ' ') != (str[i] | ' ')) {
+				match = 0;
+				break;
+			}
+		}
+		if (match) {
+			return n;
+		}
+	}
+	return -1;
 }

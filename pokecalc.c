@@ -60,18 +60,9 @@ int promptNature() {
 		char *line = NULL;
 		size_t sz;
 		read = getline(&line, &sz, stdin);
-		for (int n = 0; n < NUM_NATS; n++) {
-			const char* nat = NAT_STRINGS[n];
-			int match = 1;
-			for (int i = 0; i < sz && nat[i]; i++) {
-				if ((nat[i] | ' ') != (line[i] | ' ')) {
-					match = 0;
-					break;
-				}
-			}
-			if (match) {
-				return NAT_MAP[n];
-			}
+		int id = getNatureID(line);
+		if (id != -1) {
+			return NAT_MAP[id];
 		}
 		//free line?
 	} while (read != -1);

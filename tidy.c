@@ -130,7 +130,6 @@ void doSQL(int nid, char* name) {
 		pokeform* f = &pkinf.forms[i];
 		//TODO sanitize name before constructing query
 		snprintf(sql, BSZ, "insert into pokemon values(%d, '%s', %d, %d, %d, %d, %d, %d, %d);",nid, name, i, f->stats[Hp], f->stats[Atk], f->stats[Def], f->stats[SpA], f->stats[SpD], f->stats[Spe]);
-		printf("%s\n", sql);
 		sql_exec(sql);
 	}
 }
