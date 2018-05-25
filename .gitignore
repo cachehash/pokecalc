@@ -4,3 +4,4 @@ pokecalc.o
 sqlite_helper.o
 createDB.sql
 poke.db
+tidy.o

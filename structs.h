@@ -3,15 +3,20 @@
 
 typedef struct pokemon {
 	int nid;
+	unsigned char formID;
 	unsigned char level;
 	unsigned short nature;
 	unsigned char ivs[6];
 	unsigned char evs[6];
 } pokemon;
 
+typedef struct pokeform {
+	unsigned char stats[6];
+} pokeform;
 typedef struct pokeinfo {
 	int nid;
-	unsigned char stats[6];
+	int numForms;
+	pokeform* forms;
 } pokeinfo;
 
 #endif

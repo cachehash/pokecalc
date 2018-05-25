@@ -7,6 +7,7 @@
 #include "nature.h"
 #include "structs.h"
 #include "sqlite_helper.h"
+#include "tidy.h"
 
 int calcStat(struct pokemon* poke, int statID) {
 	int nid = poke->nid;
@@ -15,7 +16,8 @@ int calcStat(struct pokemon* poke, int statID) {
 		fprintf(stderr, "ERROR: Invalid species!\n");
 		return -1;
 	}
-	int base = pkinf->stats[statID];
+	int formID = poke->formID;
+	int base = pkinf->forms[formID].stats[statID];
 	int iv = poke->ivs[statID];
 	int ev = poke->evs[statID];
 	int level = poke->level;

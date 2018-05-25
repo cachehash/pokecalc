@@ -4,11 +4,26 @@
 #include <sqlite3.h>
 #include "stat.h"
 #include "structs.h"
+#include "tidy.h"
 static sqlite3 *db;
+int pokeTableExist() {
+	char* sql = "select count(1) from pokemon";
+	char* err_msg = 0;
+	int rc = sqlite3_exec(db, sql, NULL, NULL, &err_msg);
+	if (rc != SQLITE_OK) {
+		sqlite3_free(err_msg);
+		return 0;
+	}
+	return 1;
+}
 void init_db() {
 	int rc = sqlite3_open("poke.db", &db);
 	if (rc) {
 		fprintf(stderr, "Failed to open database: %s\n", sqlite3_errmsg(db));
+		return;
+	}
+	if (!pokeTableExist()) {
+		initializeDataBase();
 	}
 }
 void close_db(int status) {
@@ -22,6 +37,7 @@ struct callback_data {
 int callback(void* vp, int argc, char **argv, char** azColName) {
 	struct callback_data* cb = vp;
 	pokeinfo* pkinf = cb->pkinf;
+	pkinf->forms = calloc(1, sizeof(pokeform));
 	cb->valid = 1;
 	for (int i = 0; i < argc; i++) {
 		if (strcmp(azColName[i], "nid") == 0) {
@@ -29,7 +45,7 @@ int callback(void* vp, int argc, char **argv, char** azColName) {
 		}
 		for (int s = 0; s < NUM_STATS; s++) {
 			if (strcmp(STAT_STRINGS[s], azColName[i]) == 0) {
-				pkinf->stats[s] = atoi(argv[i]);
+				pkinf->forms[0].stats[s] = atoi(argv[i]);
 				break;
 			}
 		}
@@ -57,7 +73,7 @@ pokeinfo* getInfBySQL(char* sql) {
 pokeinfo* getInfByNID(int nid) {
 	const int BUFF_SZ = 2048;
 	char sql[BUFF_SZ];
-	snprintf(sql,  BUFF_SZ, "select * from pokemon where nid = %d", nid);
+	snprintf(sql, BUFF_SZ, "select * from pokemon where nid = %d order by formID desc", nid);
 	return getInfBySQL(sql);
 }
 pokeinfo* getInfByName(char* name) {
@@ -82,5 +98,16 @@ pokeinfo* getInfByName(char* name) {
 	const int BUFF_SZ = 2048;
 	char sql[BUFF_SZ];
 	snprintf(sql,  BUFF_SZ, "select * from pokemon where name = '%s'", sanitize);
+	free(sanitize);
 	return getInfBySQL(sql);
+}
+int sql_exec(char* sql) {
+	char* err_msg = NULL;
+	int rc = sqlite3_exec(db, sql, NULL, NULL, &err_msg);
+	if (rc != SQLITE_OK) {
+		fprintf(stderr, "SQL ERROR: %s\n", err_msg);
+		sqlite3_free(err_msg);
+		return rc;
+	}
+	return 0;
 }

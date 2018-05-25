@@ -3,7 +3,7 @@
 CFLAGS=-g -Wall
 LDLIBS=-lsqlite3 -lcurl -ltidy
 
-objs=pokecalc.o sqlite_helper.o nature.o
+objs=pokecalc.o sqlite_helper.o nature.o tidy.o
 
 
 all:
