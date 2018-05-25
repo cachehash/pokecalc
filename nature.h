@@ -1,3 +1,6 @@
+#ifndef NATURE_H
+#define NATURE_H
+
 //	hinder		boost
 //	S SD	SA D A|S 	SD SA D A
 #define FOREACH_NAT(D) \
@@ -27,24 +30,29 @@ D(JOLLY, 0x90) \
 D(NAIVE, 0x110) \
 D(SERIOUS, 0x210)
 
-#define GENERATE_NAT_ENUM(TOK, VAL) TOK,
-#define GENERATE_NAT_MAP(TOK, VAL) VAL,
-#define GENERATE_NAT_STRINGS(TOK, VAL) #TOK,
-#define GENERATE_NATURE_COUNT(TOK, VAL) +1
 
+#pragma GCC diagnostic ignored "-Wunused-variable"
+
+#define GENERATE_NAT_ENUM(TOK, VAL) TOK,
 enum NAT_ENUM {
 	FOREACH_NAT(GENERATE_NAT_ENUM)
 };
 
+#define GENERATE_NAT_MAP(TOK, VAL) VAL,
 static const int NAT_MAP[] = {
 	FOREACH_NAT(GENERATE_NAT_MAP)
 };
+#define GENERATE_NAT_STRINGS(TOK, VAL) #TOK,
 static const char* NAT_STRINGS[] = {
 	FOREACH_NAT(GENERATE_NAT_STRINGS)
 };
-
+#define GENERATE_NATURE_COUNT(TOK, VAL) +1
 static const int NUM_NATS = FOREACH_NAT(GENERATE_NATURE_COUNT);
+
+
+#pragma GCC diagnostic pop
 
 int natureBoost(int nat, int statID);
 int natureHinder(int nat, int statID);
 float natureFactor(int nat, int statID);
+#endif
